@@ -1,0 +1,6 @@
+/build/js/node_modules/
+/build/
+/.idea/
+/.gradle/
+/example/build/
+/kredux/build/
