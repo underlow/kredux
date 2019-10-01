@@ -1,18 +1,33 @@
 package com.github.underlow.kredux
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
+
 /**
  * all calls to dispatch must be thread confined to prevent races
  */
+@Suppress("EXPERIMENTAL_API_USAGE")
 class Store<State>(private val reducer: ExtensionReducer<State>, state: State) {
     var state = state
         private set
 
+    private val channel = Channel<RAction>(capacity = Channel.RENDEZVOUS)
     private val subscribers = ArrayList<(State) -> Unit>()
 
-    /**
-     * @throws [IllegalStateException] if dispatch already in progress
-     */
-    fun dispatch(action: RAction) = guard {
+    init {
+        GlobalScope.launch {
+            channel.consumeEach { receive(it) }
+        }
+    }
+
+    fun dispatch(action: RAction) {
+        GlobalScope.launch { channel.send(action) }
+    }
+
+
+    private fun receive(action: RAction) {
         state = reducer.invoke(this, this.state, action)
         subscribers.forEach { it.invoke(state) }
     }
@@ -22,19 +37,6 @@ class Store<State>(private val reducer: ExtensionReducer<State>, state: State) {
         listener.invoke(state)
 
         return { subscribers.remove(listener) }
-    }
-
-    private var dispatchInProgress = false
-
-    private fun guard(block: () -> Unit) {
-        check(!dispatchInProgress) { "Dispatch already in progress" }
-
-        dispatchInProgress = true
-        try {
-            block()
-        } finally {
-            dispatchInProgress = false
-        }
     }
 }
 
