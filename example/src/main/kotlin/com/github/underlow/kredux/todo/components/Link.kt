@@ -31,6 +31,8 @@ class Link(props: LinkProps) : RComponent<LinkProps, RState>(props) {
     }
 }
 
-val link = store.connect(Link::class) {
-    this.active = (it.visibilityFilter == this.filter)
+val link by lazy {
+    store.connect(Link::class) {
+        this.active = (it.visibilityFilter == this.filter)
+    }
 }

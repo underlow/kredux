@@ -40,4 +40,4 @@ class AddTodo(props: RProps) : RComponent<RProps, RState>(props) {
 }
 
 
-val addTodo = store.connect(AddTodo::class)
+val addTodo by kotlin.lazy { store.connect(AddTodo::class) }

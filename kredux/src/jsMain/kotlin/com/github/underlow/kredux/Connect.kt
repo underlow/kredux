@@ -13,7 +13,6 @@ fun <State, P : RProps, S : RState> Store<State>.connect(
 ): RBuilder.(RElementBuilder<P>.() -> Unit) -> Unit {
     return { block ->
         val connectFunction = connectToStore(wrappedComponent, dispatcher)
-
         val connectedRClass = connectFunction(this@connect, block)
         connectedRClass.invoke {}
     }
@@ -38,8 +37,6 @@ private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
                 }
                 // props of outer (wrapper) component
                 attrs.wrappedComponent = handler
-                println("Store: ${store}")
-                println("State: ${store.state}")
                 attrs.store = store
             }
         }

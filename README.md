@@ -80,8 +80,10 @@ val link = store.connect(Link::class) {
 ### Connect
 Use `store.connect` function to create connected component. Actually connect returns RBuilder extention function that can be user in render() 
 ```
-val link = store.connect(Link::class) {
-    this.active = (it.visibilityFilter == this.filter)
+val link by kotlin.lazy{ 
+    store.connect(Link::class) {
+        this.active = (it.visibilityFilter == this.filter)
+    }
 }
 ``` 
 
@@ -116,5 +118,5 @@ Since `store` is global just use `store.dispatch(Action)`
 
 
 ## Known issues
- - store and reducer should be declared in the same file as main() function (kotlin js issue?)
+ - ~~store and reducer should be declared in the same file as main() function (kotlin js issue?)~~  due to global variables initialization order it is safer define connected components as lazy  
  - no middleware yet
