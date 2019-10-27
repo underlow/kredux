@@ -3,10 +3,16 @@ package com.github.underlow.kredux
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * runBlockingTest available for jvm but not for js.
+ * Js actual implementation just to make compilation possible, do not use it.
+ */
+expect fun runTestBlocking(block: suspend () -> Unit)
+
 class ReducerTest {
 
     @Test
-    fun reducerTest() {
+    fun reducerTest() = runTestBlocking {
         val combineReducers: ExtensionReducer<State> = { state, action ->
             state.copy(
                 i = reduce(state, action),
@@ -24,10 +30,11 @@ class ReducerTest {
 
         val store = createStore(::singleReducer, state)
 
-        store.subscribe {}
-        store.dispatch(Inc)
-        store.dispatch(IncDouble)
-
+        runTestBlocking {
+            store.subscribe {}
+            store.dispatch(Inc)
+            store.dispatch(IncDouble)
+        }
         assertEquals(State(1, 1.0), store.state)
     }
 
@@ -37,10 +44,11 @@ class ReducerTest {
 
         val store = createStore(Store<State>::singleExtensionReducer, state)
 
-        store.subscribe {}
-        store.dispatch(Inc)
-        store.dispatch(IncDouble)
-
+        runTestBlocking {
+            store.subscribe {}
+            store.dispatch(Inc)
+            store.dispatch(IncDouble)
+        }
         assertEquals(State(1, 1.0), store.state)
     }
 
@@ -56,10 +64,11 @@ class ReducerTest {
         }
         val store = createStore(combineReducers, State(0, 0.0))
 
-        store.subscribe {}
-        store.dispatch(Inc)
-        store.dispatch(IncDouble)
-
+        runTestBlocking {
+            store.subscribe {}
+            store.dispatch(Inc)
+            store.dispatch(IncDouble)
+        }
         assertEquals(State(1, 1.0), store.state)
     }
 }
