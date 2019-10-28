@@ -1,6 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
-    id("io.freefair.github.package-registry-maven-publish").version("4.1.1")
+    id "maven-publish"
 }
 
 repositories {
@@ -12,12 +21,17 @@ repositories {
     mavenCentral()
 }
 
-
-github {
-//    slug
-    username = "username" //project.properties["githubUsername"]
-    token = "password" //project.properties["githubToken"]
-//    tag = "HEAD"
+publishing {
+    repositories {
+        maven {
+            name = "kredux"
+            url = uri("https://maven.pkg.github.com/underlow/kredux")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
+                password = project.findProperty("gpr.key") ?: System.getenv("GPR_API_KEY")
+            }
+        }
+    }
 }
 
 kotlin {

@@ -120,3 +120,8 @@ Since `store` is global just use `store.dispatch(Action)`
 ## Known issues
  - ~~store and reducer should be declared in the same file as main() function (kotlin js issue?)~~  due to global variables initialization order it is safer define connected components as lazy  
  - no middleware yet
+ 
+## Publish artifact 
+
+Cannot get working bintray + kotlin multiplatform so github registry only
+`./gradlew bintrayUpload -Dgpr.user=<YOUR_USER_NAME> -Dgpr.key=<YOUR_API_KEY>`  
