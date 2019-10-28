@@ -124,4 +124,4 @@ Since `store` is global just use `store.dispatch(Action)`
 ## Publish artifact 
 
 Cannot get working bintray + kotlin multiplatform so github registry only
-`./gradlew bintrayUpload -Dgpr.user=<YOUR_USER_NAME> -Dgpr.key=<YOUR_API_KEY>`  
+`./gradlew publish -Dgpr.user=<YOUR_USER_NAME> -Dgpr.key=<YOUR_API_KEY>`  
