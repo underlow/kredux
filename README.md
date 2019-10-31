@@ -112,7 +112,32 @@ fun RBuilder.footer() =
     }
 ```
 
+#### Changes validation
+
+Suppose we have hierarchy Comp1->Comp2->Comp3 each one is connected to store, 
+after state update Comp1 will be updated and will trigger update of Comp2 and Comp3, 
+then Comp2 will receive update and trigger update for Comp3 and so on.
+To prevent such massive updates validator function might be provided which check if component properties has been changed.
+
+```
+fun validateChanges(): PropsChangeValidator<State, UserPage.Props> = {
+     userData != it.userDataState.data ||
+           loading != it.userDataState.loading
+   }
+
+  val userPage by lazy {
+       store.connect(UserPage::class, validateChanges()){
+           userData = it.userDataState.data
+           loading = it.userDataState.loading
+       }
+   }
+
+```
+**if validation function is not provided all updates delivered to all components and this could cause performance issues and
+Also in some cases infinite event loop possible. If Comp3 raises some event on new props it causes update of Comp1 then Comp3 and new event**
+
 ### Dispatch
+
 
 Since `store` is global just use `store.dispatch(Action)` 
 

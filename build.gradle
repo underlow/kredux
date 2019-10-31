@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = "com.github.underlow"
-    version = "0.3"
+    version = "0.5"
 
 }
 allprojects {
