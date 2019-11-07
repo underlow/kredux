@@ -64,6 +64,15 @@ fun <State, P : RProps, S : RState> Store<State>.connect(
     }
 }
 
+/**
+ * this wrapper is required to pass [PropsChangeValidator] to outer scope.
+ * Since we know nothing about connected component we do not have even props type we have to use lambda to pass required values to wrapper.
+ */
+class ValidatorWrapper<State>(var propsChangeValidator: ((State) -> Boolean)?) {
+    fun validate(state: State): Boolean = propsChangeValidator?.invoke(state) ?: false
+
+}
+
 private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
     wrappedComponent: KClass<out RComponent<P, S>>,
     propsChangeValidator: PropsChangeValidator<State, P>,
@@ -72,10 +81,15 @@ private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
     { store, block ->
         rFunction("Wrapper for ${wrappedComponent.simpleName}") {
             child(Wrapper::class) {
-                var shouldUpdate: Boolean = false
+                val validatorWrapper = ValidatorWrapper<State>(null)
+
                 val handler: RBuilder.(dynamic) -> Unit = {
                     child(wrappedComponent) {
-                        shouldUpdate = this.attrs.propsChangeValidator(it as State)
+                        // pass validator with this@child.attrs to outer scope
+                        if (validatorWrapper.propsChangeValidator == null)
+                            validatorWrapper.propsChangeValidator = { state ->
+                                this.attrs.propsChangeValidator(state)
+                            }
                         // props of inner (wrapped) component
                         // apply props provided on call site
                         // this line allows pass props manually
@@ -84,13 +98,15 @@ private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
                         this.attrs.dispatcher(it as State)
                     }
                 }
+
                 // props of outer (wrapper) component
                 attrs.wrappedComponent = handler
                 attrs.store = store
-                attrs.shouldUpdate = shouldUpdate
+                attrs.validatorWrapper = validatorWrapper
             }
         }
     }
+
 
 class Wrapper : RComponent<Wrapper.Props, RState>() {
     private var unsubscribe: () -> Unit = {}
@@ -99,7 +115,7 @@ class Wrapper : RComponent<Wrapper.Props, RState>() {
     override fun componentWillMount() {
         this.unsubscribe = props.store.subscribe { state ->
             globalState = state
-            if (props.shouldUpdate)
+            if (props.validatorWrapper.validate(globalState))
                 this.forceUpdate()
         }
     }
@@ -117,6 +133,6 @@ class Wrapper : RComponent<Wrapper.Props, RState>() {
     interface Props : RProps {
         var wrappedComponent: RBuilder.(dynamic) -> Unit
         var store: Store<*>
-        var shouldUpdate: Boolean
+        var validatorWrapper: ValidatorWrapper<*>
     }
 }

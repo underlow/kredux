@@ -7,6 +7,7 @@ repositories {
     maven { url "https://dl.bintray.com/kotlin/kotlin-js-wrappers" }
     maven { url "https://dl.bintray.com/kotlin/kotlinx" }
     mavenCentral()
+//    mavenLocal()
 }
 
 ext.kotlin_version = '1.3.21'
@@ -25,7 +26,10 @@ kotlin {
 
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.10.0"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.2.0"
+                // to run example kredux.jar file should be got from maven, uncomment this, publish kredux project to local maven and fix version
 
+//                implementation "com.github.underlow:kredux-js:master-SNAPSHOT"
+                // project won't work with this but will be built on CI
                 implementation(project(':kredux'))
 
                 implementation(npm("core-js", "^2.0.0"))
