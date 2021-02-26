@@ -7,10 +7,10 @@ import com.github.underlow.kredux.todo.components.addTodo
 import com.github.underlow.kredux.todo.components.footer
 import com.github.underlow.kredux.todo.components.todoList
 import com.github.underlow.kredux.todo.redux.*
+import kotlinx.browser.document
 import react.dom.br
 import react.dom.div
 import react.dom.render
-import kotlin.browser.document
 
 
 val combineReducers: ExtensionReducer<State> = { state, action ->

@@ -1,5 +1,6 @@
 package com.github.underlow.kredux
 
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -9,9 +10,12 @@ import kotlin.test.assertEquals
  */
 expect fun runTestBlocking(block: suspend () -> Unit)
 
+// ignored till coroutines can be used in common tests
+@Ignore
 class ReducerTest {
 
     @Test
+
     fun reducerTest() = runTestBlocking {
         val combineReducers: ExtensionReducer<State> = { state, action ->
             state.copy(

@@ -127,7 +127,7 @@ class Wrapper : RComponent<Wrapper.Props, RState>() {
     override fun RBuilder.render() {
         child(buildElement {
             props.wrappedComponent.invoke(this, globalState)
-        }!!)
+        })
     }
 
     interface Props : RProps {
