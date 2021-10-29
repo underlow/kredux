@@ -5,17 +5,14 @@ import com.github.underlow.kredux.todo.redux.Todo
 import com.github.underlow.kredux.todo.redux.ToggleTodo
 import com.github.underlow.kredux.todo.redux.VisibilityFilter
 import com.github.underlow.kredux.todo.store
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
+import react.*
 import react.dom.ul
 
-interface TodoListProps : RProps {
+interface TodoListProps : Props {
     var todos: Array<Todo>
 }
 
-class TodoList(props: TodoListProps) : RComponent<TodoListProps, RState>(props) {
+class TodoList(props: TodoListProps) : RComponent<TodoListProps, State>(props) {
     override fun RBuilder.render() {
         ul {
             props.todos.forEach { todo(it) { store.dispatch(ToggleTodo(it.id)) } }

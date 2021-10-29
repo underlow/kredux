@@ -3,22 +3,23 @@ package com.github.underlow.kredux.todo.components
 import com.github.underlow.kredux.connect
 import com.github.underlow.kredux.todo.redux.VisibilityFilter
 import com.github.underlow.kredux.todo.store
+import kotlinx.css.marginLeft
 import kotlinx.css.px
 import kotlinx.html.js.onClickFunction
+import react.PropsWithChildren
 import react.RBuilder
 import react.RComponent
-import react.RProps
-import react.RState
+import react.State
 import styled.css
 import styled.styledButton
 
-interface LinkProps : RProps {
+interface LinkProps : PropsWithChildren {
     var active: Boolean
     var onClick: () -> Unit
     var filter: VisibilityFilter
 }
 
-class Link(props: LinkProps) : RComponent<LinkProps, RState>(props) {
+class Link(props: LinkProps) : RComponent<LinkProps, State>(props) {
     override fun RBuilder.render() {
         styledButton {
             attrs.onClickFunction = { props.onClick() }
@@ -26,7 +27,7 @@ class Link(props: LinkProps) : RComponent<LinkProps, RState>(props) {
             css {
                 marginLeft = 4.px
             }
-            children()
+            props.children()
         }
     }
 }

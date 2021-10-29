@@ -14,7 +14,7 @@ import react.dom.form
 import react.dom.input
 
 
-class AddTodo(props: RProps) : RComponent<RProps, RState>(props) {
+class AddTodo(props: Props) : RComponent<Props, State>(props){
     private val inputRef = createRef<HTMLInputElement>()
     override fun RBuilder.render() {
         div {

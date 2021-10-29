@@ -39,7 +39,7 @@ typealias PropsChangeValidator<State, Props> = Props.(State) -> Boolean
  *
  *  example:
  *
- *  fun validateChanges(): PropsChangeValidator<State, UserPage.Props> = {
+ *  fun validateChanges(): PropsChangeValidator<StoreState, UserPage.Props> = {
  *      userData != it.userDataState.data ||
  *           loading != it.userDataState.loading
  *   }
@@ -52,10 +52,10 @@ typealias PropsChangeValidator<State, Props> = Props.(State) -> Boolean
  *   }
  *
  */
-fun <State, P : RProps, S : RState> Store<State>.connect(
+fun <StoreState, P : Props, S : State> Store<StoreState>.connect(
     component: KClass<out RComponent<P, S>>,
-    propsChangeValidator: PropsChangeValidator<State, P> = { true },
-    dispatcher: MapStateToProps<State, P> = {}
+    propsChangeValidator: PropsChangeValidator<StoreState, P> = { true },
+    dispatcher: MapStateToProps<StoreState, P> = {}
 ): RBuilder.(RElementBuilder<P>.() -> Unit) -> Unit {
     return { block ->
         val connectFunction = connectToStore(component, propsChangeValidator, dispatcher)
@@ -73,15 +73,15 @@ class ValidatorWrapper<State>(var propsChangeValidator: ((State) -> Boolean)?) {
 
 }
 
-private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
+private fun <StoreState, P : Props, S : State> Store<StoreState>.connectToStore(
     wrappedComponent: KClass<out RComponent<P, S>>,
-    propsChangeValidator: PropsChangeValidator<State, P>,
-    dispatcher: MapStateToProps<State, P>
-): (Store<State>, RElementBuilder<P>.() -> Unit) -> RClass<P> =
+    propsChangeValidator: PropsChangeValidator<StoreState, P>,
+    dispatcher: MapStateToProps<StoreState, P>
+): (Store<StoreState>, RElementBuilder<P>.() -> Unit) -> FC<P> =
     { store, block ->
-        rFunction("Wrapper for ${wrappedComponent.simpleName}") {
+        functionComponent("Wrapper for ${wrappedComponent.simpleName}") {
             child(Wrapper::class) {
-                val validatorWrapper = ValidatorWrapper<State>(null)
+                val validatorWrapper = ValidatorWrapper<StoreState>(null)
 
                 val handler: RBuilder.(dynamic) -> Unit = {
                     child(wrappedComponent) {
@@ -95,7 +95,7 @@ private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
                         // this line allows pass props manually
                         block.invoke(this)
                         // props dispatch
-                        this.attrs.dispatcher(it as State)
+                        this.attrs.dispatcher(it as StoreState)
                     }
                 }
 
@@ -108,7 +108,7 @@ private fun <State, P : RProps, S : RState> Store<State>.connectToStore(
     }
 
 
-class Wrapper : RComponent<Wrapper.Props, RState>() {
+class Wrapper : RComponent<Wrapper.WrapperProps, State>() {
     private var unsubscribe: () -> Unit = {}
     private var globalState: dynamic = null
 
@@ -130,7 +130,7 @@ class Wrapper : RComponent<Wrapper.Props, RState>() {
         })
     }
 
-    interface Props : RProps {
+    interface WrapperProps : Props {
         var wrappedComponent: RBuilder.(dynamic) -> Unit
         var store: Store<*>
         var validatorWrapper: ValidatorWrapper<*>

@@ -8,6 +8,7 @@ and usage example [kotlin-poc-frontend-react-redux](https://github.com/lawik123/
 
 See example (this is todo example taken from [kotlin-poc-frontend-react-redux](https://github.com/lawik123/kotlin-poc-frontend-react-redux))
 
+to run example just use `./gradlew :example:run`
 
 ### Actions
 
