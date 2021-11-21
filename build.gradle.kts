@@ -8,5 +8,5 @@ plugins {
 
 allprojects {
     group = "com.github.underlow"
-    version = "0.9"
+    version = "0.10"
 }

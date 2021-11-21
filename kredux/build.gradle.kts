@@ -36,7 +36,7 @@ publishing {
 
 kotlin {
     jvm() // Creates a JVM target with the default name 'jvm'
-    js(/*IR*/) {  // JS target named 'js'
+    js(/*IR*/BOTH) {  // JS target named 'js'
         browser()
     }
 
